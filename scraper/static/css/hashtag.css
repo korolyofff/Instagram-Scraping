@@ -1,0 +1,52 @@
+.hashtag__input {
+    max-width: 30%;
+    margin-top: 15px;
+    margin-right: 80%;
+    margin-left: 1%;
+    display: block;
+    border-bottom-color: #1b1e21;
+    border-bottom-style: groove;
+}
+
+.proxy__host{
+    max-width: 15%;
+    margin-left: auto;
+    margin-right: 50px;
+    margin-top: 30px ;
+    display: block;
+    border-bottom-style: groove;
+}
+
+.proxy__port{
+    max-width: 15%;
+    margin-left: auto;
+    margin-right: 50px;
+    display: block;
+}
+
+.proxy__text__host{
+    margin-left: 75%;
+    margin-top: 15px ;
+    display: block;
+    border-bottom-color: #1b1e21;
+    border-bottom-style: groove;
+
+}
+
+.proxy__text__port{
+    margin-left: 75%;
+    margin-top: 10px ;
+    display: block;
+    border-bottom-color: #1b1e21;
+    border-bottom-style: groove;
+
+}
+
+.hashtag__checkbox{
+    margin-top: 10px;
+    margin-left: 1.5%;
+}
+
+.scrape__button{
+    margin-left: 50%;
+}

@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from scraper.views import scrape
+from scraper.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('scrape/', scrape)
+    path('scrape/', scrape, name='main page'),
+    path('documentation/', documentation, name='documentation'),
+    path('hashtag?collector/', HashtagView.as_view(), name='hashtag'),
+    path('follower?collector/', FollowersView.as_view(), name='follower'),
+    path('following?collector/', FollowingView.as_view(), name='following')
 ]

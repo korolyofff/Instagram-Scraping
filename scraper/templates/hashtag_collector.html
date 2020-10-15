@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% include static %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/scraper.css"%}" >
+    <link rel="stylesheet" type="text/css" href="{% static "css/hashtag.css"%}" >
+
+{% endblock %}
+{% block title %}Hashtag Collector {% endblock %}
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+     {{ form }}
+{#    <div class="hashtag__collector">#}
+{#            <input type="text"  class="hashtag__input form-control" placeholder="#example1, #example2" aria-label="Recipient's username" aria-describedby="basic-addon2">#}
+{#            <p><input class="hashtag__checkbox" type="checkbox" name="a" value="private"> Private Only</p>#}
+{#            <p><input class="hashtag__checkbox" type="checkbox" name="a" value="business" checked> Business Only</p>#}
+{#            <p><input class="hashtag__checkbox" type="checkbox" name="a" value="scrape" checked> E-mail Only</p>#}
+{#    </div>#}
+{#    <div class="input-group mb-3">#}
+{#        <p class="proxy__text__host">Proxy Host</p>#}
+{#        <input type="text"  class="inline proxy__host form-control" placeholder="None" aria-label="Recipient's username" aria-describedby="basic-addon2">#}
+{#    <div class="input-group-append">#}
+{#  </div>#}
+{#</div>#}
+{##}
+{#     <div class="input-group mb-3">#}
+{#         <p class="proxy__text__port">Proxy Port</p>#}
+{#         <input type="text" class="inline proxy__port form-control" placeholder="None" aria-label="Recipient's username" aria-describedby="basic-addon2">#}
+{#    <div class="input-group-append">#}
+{#  </div>#}
+{#</div>#}
+    <input id="scrape_submit" type="submit" value="Scrape">
+    </form>
+    <div class="scrape__button">
+{#    <button type="submit" class="btn btn-success" name="scrape">Scrape</button>#}
+    </div>
+    {{ hashtags }}
+
+
+
+{% endblock %}

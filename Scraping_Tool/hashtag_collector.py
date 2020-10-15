@@ -7,10 +7,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 
 
-# TODO SCRAPING PROFILES DONE
+# TODO SCRAPING PROFILES
 # TODO SELENIUM WAIT
 # TODO EXCEPT ATTR ERROR
-# TODO CHANGE SEARCHING BY HASHTAG (by URL) DONE
+# TODO CHANGE SEARCHING BY HASHTAG (by URL)
 class Cliker:
     def __init__(self):
         self.options = webdriver.ChromeOptions()
@@ -191,9 +191,12 @@ def xpath_soup(element):
     components.reverse()
     return '/%s' % '/'.join(components)
 
-
-if __name__ == '__main__':
+def main():
     scraper = Cliker()
     scraper.login('korolyofff', 'qwerty123LOL')
     scraper.find_by_hashtag('#follow')
     scraper.click_photos()
+
+if __name__ == '__main__':
+    main()
+
