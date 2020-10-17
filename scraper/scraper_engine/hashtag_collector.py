@@ -1,16 +1,13 @@
-'''Instagram WebScraping'''
+'''Instagram WebScraping Hashtag Collector'''
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
 from selenium.webdriver.common.proxy import Proxy, ProxyType
+from selenium.webdriver.firefox.options import Options
+from scraper.models import Users
 from time import sleep
 import re
-
-# TODO SCRAPING PROFILES DONE
-# TODO SELENIUM WAIT
-# TODO EXCEPT ATTR ERROR
-# TODO CHANGE SEARCHING BY HASHTAG (by URL) DONE
 
 
 class Cliker:
@@ -33,7 +30,8 @@ class Cliker:
                 "sslProxy": proxy
             }
 
-        self.options = webdriver.FirefoxOptions()
+        self.options = Options()
+        self.options.headless = True
         self.options.add_argument('--lang=en')
         self.options.add_argument('--start-maximized')
         try:
@@ -61,7 +59,7 @@ class Cliker:
             quantity = soup.find('span', 'g47SY').string
             quantity = quantity.replace(',', '')
 
-            return int(quantity) // 4
+            return int(quantity) // 12
 
         except AttributeError:
             print('Scroll Quantity Not Found')
@@ -75,38 +73,43 @@ class Cliker:
         soup = BeautifulSoup(html, 'lxml')
         lines = soup.find_all('div', 'Nnq7C')
         for line in lines:
+            print('FIRST STEP')
             photos = line.findChildren('div', 'v1Nh3')
-            print(len(photos))
             for photo in photos:
                 photo = self.driver.find_element_by_xpath(xpath_soup(photo))
                 photo.click()
                 self.click_profile()
 
-        for _ in range(self.scroll_quantity(soup)):
-            coord += 1150
-            self.driver.execute_script("window.scrollTo(0, {})".format(coord))
-            html = self.driver.page_source
-            soup = BeautifulSoup(html, 'lxml')
-            lines = soup.find_all('div', 'Nnq7C')
-            for line in lines[-4:]:
-                photos = line.findChildren('div', 'v1Nh3')
-                print(len(photos))
-                for photo in photos:
-                    photo = self.driver.find_element_by_xpath(xpath_soup(photo))
-                    photo.click()
-                    self.click_profile()
+        if self.scroll_quantity(soup) > 40 // 12:
+            print('SECOND STEP')
+            for _ in range(self.scroll_quantity(soup)):
+                coord += 1150
+                self.driver.execute_script("window.scrollTo(0, {})".format(coord))
+                html = self.driver.page_source
+                soup = BeautifulSoup(html, 'lxml')
+                lines = soup.find_all('div', 'Nnq7C')
+                for line in lines[-4:]:
+                    photos = line.findChildren('div', 'v1Nh3')
+                    print(len(photos))
+                    for photo in photos:
+                        photo = self.driver.find_element_by_xpath(xpath_soup(photo))
+                        photo.click()
+                        self.click_profile()
 
     def click_profile(self):
-        sleep(0.5)
+        sleep(1.5)
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
         profile_xpath = xpath_soup(soup.find('a', 'yWX7d'))
         self.driver.find_element_by_xpath(profile_xpath).click()
         sleep(1)
-        scraper = Scraper(self.hashtags, self.private_only, self.business_only, self.email_only, None, '')
+        scraper = Scraper(self.email_only, self.driver)
         scraper.scrape_profile()
 
 
-class Scraper(Cliker):
+class Scraper():
+    def __init__(self, email_only, driver):
+        self.email_only = email_only
+        self.driver = driver
 
     def has_email(self, soup):
         sleep(1)
@@ -122,26 +125,39 @@ class Scraper(Cliker):
         except AttributeError:
             return False
 
-
-
     def scrape_profile(self):
-        sleep(1)
+        sleep(3)
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
         if self.email_only:
             if self.has_email(soup):
                 username = self.scrape_username(soup)
-                posts = self.scrape_posts(soup)
+                posts = str(self.scrape_posts(soup)).replace(' ', '')
+                following = str(self.scrape_following(soup)).replace(' ', '')
+                followers = str(self.scrape_subscribers(soup)).replace(' ', '')
+                full_name = self.scrape_name(soup)
+                description = self.scrape_profile_description(soup)
+                email = ''
+                pic = self.scrape_profile_picture(soup)
                 subscribed_on_your_profile = self.subscribed_on_you(soup)
-                following = self.you_subscrided(soup)
-                followers = self.scrape_subscribers(soup)
-                name = self.scrape_name(soup)
+                you_subscribed = self.you_subscrided(soup)
+                user = Users(username=username, posts=posts, followers=followers, following=following, name=full_name,
+                             description=description, email=email, subscribed_on_your_profile=subscribed_on_your_profile,
+                             you_subscribed=you_subscribed, picture=pic)
+                user.save()
         else:
             username = self.scrape_username(soup)
-            posts = self.scrape_posts(soup)
+            posts = str(self.scrape_posts(soup)).replace(' ', '')
+            following = str(self.scrape_following(soup)).replace(' ', '')
+            followers = str(self.scrape_subscribers(soup)).replace(' ', '')
+            full_name = self.scrape_name(soup)
+            description = self.scrape_profile_description(soup)
+            pic = self.scrape_profile_picture(soup)
             subscribed_on_your_profile = self.subscribed_on_you(soup)
-            following =  self.you_subscrided(soup)
-            followers = self.scrape_subscribers(soup)
-            name = self.scrape_name(soup)
+            you_subscribed = self.you_subscrided(soup)
+            user = Users(username=username, posts=posts, followers=followers, following=following, name=full_name,
+                         description=description, email=' ', subscribed_on_your_profile=subscribed_on_your_profile,
+                         you_subscribed=you_subscribed, picture=pic)
+            user.save()
 
         self.driver.back()
         self.driver.back()
@@ -155,13 +171,15 @@ class Scraper(Cliker):
 
     def scrape_posts(self, soup):
         try:
-            return soup.find('span', 'g47SY ').string
+            return soup.find_all('span', 'g47SY')[0].string
         except AttributeError:
+            return '0'
+        except IndexError:
             return '0'
 
     def scrape_subscribers(self, soup):
         try:
-            return soup.find_all('span', 'g47SY ')[1].string
+            return soup.find_all('span', 'g47SY')[1].text
         except AttributeError:
             return '0'
         except IndexError:
@@ -169,7 +187,7 @@ class Scraper(Cliker):
 
     def scrape_following(self, soup):
         try:
-            return soup.find_all('span', 'g47SY ')[2].string
+            return soup.find_all('span', 'g47SY')[2].text
         except AttributeError:
             return '0'
         except IndexError:
@@ -177,14 +195,14 @@ class Scraper(Cliker):
 
     def scrape_name(self, soup):
         try:
-            return soup.find('h1', 'rhpdm').string
+            return soup.find('h1', 'rhpdm').text
         except AttributeError:
             return ' '
 
     def scrape_profile_description(self, soup):
         try:
             div = soup.find('div', '-vDIg')
-            return div.findChild('span').string
+            return div.findChild('span').text
         except AttributeError:
             return ' '
 
@@ -198,6 +216,8 @@ class Scraper(Cliker):
         try:
             if soup.find('button', '-fzfL'):
                 return 'Yes'
+            else:
+                return ' '
         except AttributeError:
             return ' '
 
@@ -205,6 +225,8 @@ class Scraper(Cliker):
         try:
             if soup.find('button', '_5f5mN').string == 'Follow Back':
                 return 'Yes'
+            else:
+                return ' '
         except AttributeError:
             return ' '
 
@@ -227,9 +249,11 @@ def xpath_soup(element):
 def main(hashtags, private_only: False, business_only: False, email_only: False, proxy_port: None, proxy_host: '', login, password):
     scraper = Cliker(hashtags, private_only, business_only,email_only, proxy_port, proxy_host)
     scraper.login(login, password)
-    scraper.find_by_hashtag('follow')
-    scraper.click_photos()
+    for hashtag in hashtags:
+        hashtag = hashtag.replace(' ', '')
+        scraper.find_by_hashtag(hashtag)
+        scraper.click_photos()
 
 
 if __name__ == '__main__':
-    main(['#follow', '#clown'], False, False, False, None, '', 'korolyofff', 'qwerty123LOL' )
+    pass

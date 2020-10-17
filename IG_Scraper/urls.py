@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from scraper.views import *
 
 urlpatterns = [
@@ -23,5 +23,6 @@ urlpatterns = [
     path('documentation/', documentation, name='documentation'),
     path('hashtag?collector/', HashtagView.as_view(), name='hashtag'),
     path('follower?collector/', FollowersView.as_view(), name='follower'),
-    path('following?collector/', FollowingView.as_view(), name='following')
+    path('following?collector/', FollowingView.as_view(), name='following'),
+    path('to?excel/', ToExcelView.as_view(), name= 'to_excel')
 ]
