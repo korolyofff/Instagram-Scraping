@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% load static %}
 {% include static %}
 {% block styles %}
@@ -8,34 +9,26 @@
 {% endblock %}
 {% block title %}Follower Collector {% endblock %}
 {% block content %}
-    <form method="post">
+        <form method="post">
     {% csrf_token %}
-     {{ form }}
-{#    <div class="hashtag__collector">#}
-{#            <input type="text"  class="hashtag__input form-control" placeholder="#example1, #example2" aria-label="Recipient's username" aria-describedby="basic-addon2">#}
-{#            <p><input class="hashtag__checkbox" type="checkbox" name="a" value="private"> Private Only</p>#}
-{#            <p><input class="hashtag__checkbox" type="checkbox" name="a" value="business" checked> Business Only</p>#}
-{#            <p><input class="hashtag__checkbox" type="checkbox" name="a" value="scrape" checked> E-mail Only</p>#}
-{#    </div>#}
-{#    <div class="input-group mb-3">#}
-{#        <p class="proxy__text__host">Proxy Host</p>#}
-{#        <input type="text"  class="inline proxy__host form-control" placeholder="None" aria-label="Recipient's username" aria-describedby="basic-addon2">#}
-{#    <div class="input-group-append">#}
-{#  </div>#}
-{#</div>#}
-{##}
-{#     <div class="input-group mb-3">#}
-{#         <p class="proxy__text__port">Proxy Port</p>#}
-{#         <input type="text" class="inline proxy__port form-control" placeholder="None" aria-label="Recipient's username" aria-describedby="basic-addon2">#}
-{#    <div class="input-group-append">#}
-{#  </div>#}
-{#</div>#}
-    <input id="scrape_submit" type="submit" value="Scrape">
+        <div class="form-group col-md-6 mb-0 hashtag__input">
+                  {{ form.profiles|as_crispy_field }}
+              </div>
+                <div class="form-group col-md-6 mb-0 hashtag__checkbox">
+                    Email Only
+                  {{ form.email_only }}
+                </div>
+        <div class="form-group col-md-6 mb-0 proxy__host">
+                  {{ form.proxy_host|as_crispy_field }}
+              </div>
+        <div class="form-group col-md-6 mb-0 proxy__port">
+                  {{ form.proxy_port|as_crispy_field }}
+              </div>
+    <input id="scrape_submit" type="submit" value="Scrape" class="scrape__button btn btn-outline-secondary">
     </form>
     <div class="scrape__button">
 {#    <button type="submit" class="btn btn-success" name="scrape">Scrape</button>#}
     </div>
-    {{ hashtags }}
 
 
 

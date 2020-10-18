@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import InvalidArgumentException
 from selenium.webdriver.common.proxy import Proxy, ProxyType
+from selenium.webdriver.firefox.options import Options
+
 from scraper.models import Users
 from time import sleep
 import re
@@ -29,7 +31,13 @@ class Cliker:
                 "sslProxy": proxy
             }
 
-        self.options = webdriver.FirefoxOptions()
+        firefox_profile = webdriver.FirefoxProfile()
+        firefox_profile.set_preference("intl.accept_languages", 'en-us')
+        firefox_profile.update_preferences()
+
+        self.options = Options()
+        # self.options.headless = True
+        self.options.profile = firefox_profile
         self.options.add_argument('--lang=en')
         self.options.add_argument('--start-maximized')
         try:

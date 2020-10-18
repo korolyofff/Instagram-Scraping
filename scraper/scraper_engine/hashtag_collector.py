@@ -30,8 +30,13 @@ class Cliker:
                 "sslProxy": proxy
             }
 
+        firefox_profile = webdriver.FirefoxProfile()
+        firefox_profile.set_preference("intl.accept_languages", 'en-us')
+        firefox_profile.update_preferences()
+
         self.options = Options()
         self.options.headless = True
+        self.options.profile = firefox_profile
         self.options.add_argument('--lang=en')
         self.options.add_argument('--start-maximized')
         try:
@@ -58,6 +63,7 @@ class Cliker:
         try:
             quantity = soup.find('span', 'g47SY').string
             quantity = quantity.replace(',', '')
+            quantity = quantity.replace(' ', '')
 
             return int(quantity) // 12
 
@@ -76,6 +82,11 @@ class Cliker:
             print('FIRST STEP')
             photos = line.findChildren('div', 'v1Nh3')
             for photo in photos:
+                if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[15]/div[1]':
+                    continue
+
+                if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[14]/div[1]':
+                    continue
                 photo = self.driver.find_element_by_xpath(xpath_soup(photo))
                 photo.click()
                 self.click_profile()

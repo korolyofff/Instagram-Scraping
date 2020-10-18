@@ -2,25 +2,6 @@ from django.http import HttpResponse
 
 from scraper.models import Users
 import csv
-import os
-
-def csv_new(filename):
-    DATA = [['ID', 'Username', 'Posts', 'Subscribed to you', 'Subscribed by you', 'Following',
-             'Followers', 'Name', 'Descriprion', 'Picture', 'Email']]
-    with open(filename, 'w') as csv_file:
-        writer = csv.writer(csv_file, delimiter=',')
-        for line in DATA:
-            writer.writerow(line)
-
-
-def csv_writer(data, filename):
-    if not os.path.isfile(filename) or os.stat(filename).st_size == 0:
-        csv_new(filename)
-
-    with open(filename, "a") as csv_file:
-        writer = csv.writer(csv_file, delimiter=',')
-        for line in data:
-            writer.writerow(line)
 
 def export_using_filters(email_only, subscribed, subscribe):
     response = HttpResponse(content_type='text/csv')
