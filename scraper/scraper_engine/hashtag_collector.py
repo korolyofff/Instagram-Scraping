@@ -1,8 +1,8 @@
 '''Instagram WebScraping Hashtag Collector'''
 
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.common.exceptions import InvalidArgumentException
+from seleniumwire import webdriver
+from selenium.common.exceptions import InvalidArgumentException, NoSuchElementException
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.firefox.options import Options
 from scraper.models import Users
@@ -12,35 +12,26 @@ import re
 
 class Cliker:
     def __init__(self, hashtags, private_only: False, business_only: False, email_only: False, proxy_port: None,
-                proxy_host: ''):
+            proxy):
         self.business_only = business_only
         self.private_only = private_only
         self.email_only = email_only
         self.hashtags = hashtags
-
-        firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
-        firefox_capabilities['marionette'] = True
-
-        if proxy_host != '' and proxy_port != None:
-            proxy = '{}:{}'.format(proxy_host, proxy_port)
-            firefox_capabilities['proxy'] = {
-                "proxyType": ProxyType.MANUAL,
-                "httpProxy": proxy,
-                "ftpProxy": proxy,
-                "sslProxy": proxy
+        self.options = None
+        if proxy != '':
+            self.options = {
+                'proxy': {
+                    'https': proxy,
+                    'http': proxy,
+                    'no_proxy': 'localhost,127.0.0.1,dev_server:8889'
+                }
             }
-
         firefox_profile = webdriver.FirefoxProfile()
         firefox_profile.set_preference("intl.accept_languages", 'en-us')
         firefox_profile.update_preferences()
 
-        self.options = Options()
-        self.options.headless = True
-        self.options.profile = firefox_profile
-        self.options.add_argument('--lang=en')
-        self.options.add_argument('--start-maximized')
         try:
-            self.driver = webdriver.Firefox(capabilities=firefox_capabilities, options=self.options)
+            self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile)
         except InvalidArgumentException:
             print('Close Firefox and try again')
 
@@ -79,20 +70,37 @@ class Cliker:
         soup = BeautifulSoup(html, 'lxml')
         lines = soup.find_all('div', 'Nnq7C')
         for line in lines:
-            print('FIRST STEP')
             photos = line.findChildren('div', 'v1Nh3')
             for photo in photos:
-                if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[15]/div[1]':
-                    continue
+                try:
+                    if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[15]/div[1]':
+                        continue
 
-                if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[14]/div[1]':
-                    continue
-                photo = self.driver.find_element_by_xpath(xpath_soup(photo))
+                    if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[14]/div[1]':
+                        continue
+                    try:
+                        photo = self.driver.find_element_by_xpath(xpath_soup(photo))
+
+                    except NoSuchElementException:
+                        continue
+
+                except AttributeError:
+                    sleep(2)
+                    if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[15]/div[1]':
+                        continue
+
+                    if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[14]/div[1]':
+                        continue
+
+                    try:
+                        photo = self.driver.find_element_by_xpath(xpath_soup(photo))
+                    except NoSuchElementException:
+                        continue
+
                 photo.click()
                 self.click_profile()
 
         if self.scroll_quantity(soup) > 40 // 12:
-            print('SECOND STEP')
             for _ in range(self.scroll_quantity(soup)):
                 coord += 1150
                 self.driver.execute_script("window.scrollTo(0, {})".format(coord))
@@ -103,19 +111,30 @@ class Cliker:
                     photos = line.findChildren('div', 'v1Nh3')
                     print(len(photos))
                     for photo in photos:
-                        photo = self.driver.find_element_by_xpath(xpath_soup(photo))
+                        try:
+                            photo = self.driver.find_element_by_xpath(xpath_soup(photo))
+                        except AttributeError:
+                            sleep(2)
+                            photo = self.driver.find_element_by_xpath(xpath_soup(photo))
+                        except NoSuchElementException:
+                            continue
+
                         photo.click()
                         self.click_profile()
 
     def click_profile(self):
         sleep(1.5)
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
-        profile_xpath = xpath_soup(soup.find('a', 'yWX7d'))
+        try:
+            profile_xpath = xpath_soup(soup.find('a', 'yWX7d'))
+        except AttributeError:
+            sleep(2)
+            profile_xpath = xpath_soup(soup.find('a', 'yWX7d'))
+
         self.driver.find_element_by_xpath(profile_xpath).click()
         sleep(1)
         scraper = Scraper(self.email_only, self.driver)
         scraper.scrape_profile()
-
 
 class Scraper():
     def __init__(self, email_only, driver):

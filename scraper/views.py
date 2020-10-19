@@ -38,11 +38,11 @@ class FollowersView(LoginRequiredMixin, View):
         return render(request, 'follower_collector.html', {'form': form})
 
     def post(self, request):
-        print('CLOWn')
         form = FollowersForm(request.POST)
         if form.is_valid():
             login_data = LoginData.objects.get(pk=1)
             info = form.cleaned_data
+            print(info)
             followers_collector.main(data.parse_profiles(info['profiles']), info['private_only'],
                                    info['business_only'], info['email_only'], info['proxy_port'],
                                    info['proxy_host'], login_data.login, login_data.password)

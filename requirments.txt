@@ -6,4 +6,4 @@ selenium==3.141.0
 beautifulsoup4==4.9.3
 mysqlclient==2.0.1
 django-crispy-forms==1.9.2
-
+selenium-wire==2.1.1

@@ -1,7 +1,7 @@
 '''Instagram WebScraping Followers Collector'''
 
 from bs4 import BeautifulSoup
-from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.common.exceptions import InvalidArgumentException
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.firefox.options import Options
@@ -13,35 +13,27 @@ import re
 
 class Cliker:
     def __init__(self, profiles, private_only: False, business_only: False, email_only: False, proxy_port: None,
-                 proxy_host: ''):
+                 proxy: ''):
         self.business_only = business_only
         self.private_only = private_only
         self.email_only = email_only
         self.profiles = profiles
-
-        firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
-        firefox_capabilities['marionette'] = True
-
-        if proxy_host != '' and proxy_port != None:
-            proxy = '{}:{}'.format(proxy_host, proxy_port)
-            firefox_capabilities['proxy'] = {
-                "proxyType": ProxyType.MANUAL,
-                "httpProxy": proxy,
-                "ftpProxy": proxy,
-                "sslProxy": proxy
+        self.options = None
+        if proxy != '':
+            self.options = {
+                'proxy': {
+                    'https': proxy,
+                    'http': proxy,
+                    'no_proxy': 'localhost,127.0.0.1,dev_server:8889'
+                }
             }
 
         firefox_profile = webdriver.FirefoxProfile()
         firefox_profile.set_preference("intl.accept_languages", 'en-us')
         firefox_profile.update_preferences()
 
-        self.options = Options()
-        # self.options.headless = True
-        self.options.profile = firefox_profile
-        self.options.add_argument('--lang=en')
-        self.options.add_argument('--start-maximized')
         try:
-            self.driver = webdriver.Firefox(capabilities=firefox_capabilities, options=self.options)
+            self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile)
         except InvalidArgumentException:
             print('Close Firefox and try again')
 
@@ -101,7 +93,7 @@ class Cliker:
                     continue
 
         except AttributeError:
-            print('89 FIX')
+            pass
 
 class Scraper():
     def __init__(self, email_only, driver):

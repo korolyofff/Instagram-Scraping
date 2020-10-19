@@ -5,7 +5,7 @@ class HashtagForm(forms.Form):
     email_only = forms.BooleanField(label='Email only',required=False)
     private_only = forms.BooleanField(label='Private only', required=False)
     business_only = forms.BooleanField(label='Business only', required=False)
-    proxy_host = forms.CharField(label='Proxy host', required=False)
+    proxy_host = forms.CharField(label='Proxy', required=False)
     proxy_port = forms.IntegerField(label='Proxy port', required=False)
 
 class FollowersForm(forms.Form):
@@ -13,7 +13,7 @@ class FollowersForm(forms.Form):
     email_only = forms.BooleanField(label='Email only', required=False)
     private_only = forms.BooleanField(label='Private only', required=False)
     business_only = forms.BooleanField(label='Business only', required=False)
-    proxy_host = forms.CharField(label='Proxy host', required=False)
+    proxy_host = forms.CharField(label='Proxy', required=False)
     proxy_port = forms.IntegerField(label='Proxy port', required=False)
 
 class FollowingForm(forms.Form):
@@ -21,7 +21,7 @@ class FollowingForm(forms.Form):
     email_only = forms.BooleanField(label='Email only', required=False)
     private_only = forms.BooleanField(label='Private only', required=False)
     business_only = forms.BooleanField(label='Business only', required=False)
-    proxy_host = forms.CharField(label='Proxy host', required=False)
+    proxy_host = forms.CharField(label='Proxy', required=False)
     proxy_port = forms.IntegerField(label='Proxy port', required=False)
 
 
