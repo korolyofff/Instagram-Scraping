@@ -21,9 +21,9 @@ class Cliker:
         if proxy != '':
             self.options = {
                 'proxy': {
-                    'https': proxy,
-                    'http': proxy,
-                    'no_proxy': 'localhost,127.0.0.1,dev_server:8889'
+                    'http': 'http://{}'.format(proxy),
+                    'https': 'https://{}'.format(proxy),
+                    'no_proxy': 'localhost,127.0.0.1,dev_server:8080'
                 }
             }
         firefox_profile = webdriver.FirefoxProfile()

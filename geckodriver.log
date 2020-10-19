@@ -848,3 +848,41 @@ Exiting due to channel error.
 [GFX1-]: Receive IPC close with reason=AbnormalShutdown
 Exiting due to channel error.
 Exiting due to channel error.
+1603135781948	geckodriver	INFO	Listening on 127.0.0.1:50869
+1603135782941	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/r6/nb6z1l350yng5hfprt5hhgbm0000gn/T/rust_mozprofilexkMhxU"
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1603135785926	Marionette	INFO	Listening on port 50880
+1603135786021	Marionette	WARN	TLS certificate errors will be ignored for this session
+1603135786023	Marionette	INFO	Proxy settings initialised: {"proxyType":"manual","httpProxy":"127.0.0.1:50867","noProxy":[],"sslProxy":"127.0.0.1:50867"}
+console.error: services.settings: 
+  main/messaging-experiments Signature failed  TypeError: NetworkError when attempting to fetch resource.
+console.error: services.settings: 
+  main/message-groups Signature failed  TypeError: NetworkError when attempting to fetch resource.
+console.error: services.settings: 
+  main/fxmonitor-breaches Signature failed  TypeError: NetworkError when attempting to fetch resource.
+1603135890301	geckodriver	INFO	Listening on 127.0.0.1:51541
+1603135891306	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/r6/nb6z1l350yng5hfprt5hhgbm0000gn/T/rust_mozprofilepYWWdI"
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1603135893622	Marionette	INFO	Listening on port 51552
+1603135893699	Marionette	WARN	TLS certificate errors will be ignored for this session
+1603135893701	Marionette	INFO	Proxy settings initialised: {"proxyType":"manual","httpProxy":"127.0.0.1:51539","noProxy":[],"sslProxy":"127.0.0.1:51539"}
+1603136146926	Marionette	INFO	Stopped listening on port 51552
+1603136148470	geckodriver	INFO	Listening on 127.0.0.1:52741
+1603136149485	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/r6/nb6z1l350yng5hfprt5hhgbm0000gn/T/rust_mozprofileacqbWl"
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1603136152520	Marionette	INFO	Listening on port 52752
+1603136152568	Marionette	WARN	TLS certificate errors will be ignored for this session
+1603136152569	Marionette	INFO	Proxy settings initialised: {"proxyType":"manual","httpProxy":"127.0.0.1:52739","noProxy":[],"sslProxy":"127.0.0.1:52739"}
+JavaScript error: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js, line 70: uncaught exception: TagError: adsbygoogle.push() error: No slot size for availableWidth=0
+1603136414183	addons.xpi	ERROR	System addon update list error Error: Failed downloading XML, status: 0, reason: error
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
