@@ -46,17 +46,13 @@ class Cliker:
         self.driver.get('https://www.instagram.com/')
 
     def login(self, phone, password):
-        try:
-            WebDriverWait(self.driver, 60).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]/div/div[2]/div/label/input')))
-        except TimeoutException:
-            raise TimeoutException
-
         phone_field = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[1]/div/label/input')
         password_field = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[2]/div/label/input')
         phone_field.send_keys(phone)
         password_field.send_keys(password)
         login = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div')
+        WebDriverWait(self.driver, 60).until(
+            EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[3]/button/div')))
         login.click()
 
     def find_by_hashtag(self, hashtag):
