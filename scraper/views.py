@@ -7,11 +7,10 @@ from scraper.scraper_engine import following_collector as fc
 from scraper import data, toExcel
 from .models import LoginData
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import FileResponse, HttpResponse
+from django.http import  HttpResponse
 from time import sleep
-from django.conf import settings
-import csv
 
+from django.template import  loader
 import os
 
 class HashtagView(LoginRequiredMixin, View):
@@ -29,6 +28,9 @@ class HashtagView(LoginRequiredMixin, View):
             hashtag_collector.main(data.parse_hashtags(info['hashtags']), info['private_only'],
                                    info['business_only'], info['email_only'], info['proxy_port'],
                                    info['proxy_host'], login_data.login, login_data.password)
+            template = loader.get_template('scrape.html')
+
+            return HttpResponse(template.render())
 
 class FollowersView(LoginRequiredMixin, View):
     login_url = '/admin/'
@@ -47,6 +49,10 @@ class FollowersView(LoginRequiredMixin, View):
                                    info['business_only'], info['email_only'], info['proxy_port'],
                                    info['proxy_host'], login_data.login, login_data.password)
 
+            template = loader.get_template('scrape.html')
+
+            return HttpResponse(template.render())
+
 class FollowingView(LoginRequiredMixin,View):
     login_url = '/admin/'
     def get(self, request):
@@ -61,6 +67,10 @@ class FollowingView(LoginRequiredMixin,View):
             fc.main(data.parse_profiles(info['profiles']), info['private_only'],
                                      info['business_only'], info['email_only'], info['proxy_port'],
                                      info['proxy_host'],  login_data.login, login_data.password)
+
+            template = loader.get_template('scrape.html')
+
+            return HttpResponse(template.render())
 
 class ToExcelView(LoginRequiredMixin,View):
     login_url = '/admin/'
@@ -78,7 +88,7 @@ class ToExcelView(LoginRequiredMixin,View):
             return response
 
 
-@login_required(login_url='/admin/')
+# @login_required(login_url='/admin/')
 def scrape(request):
     return render(request, 'scrape.html')
 

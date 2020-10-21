@@ -2,9 +2,11 @@
 
 from bs4 import BeautifulSoup
 from seleniumwire import webdriver
-from selenium.common.exceptions import InvalidArgumentException, NoSuchElementException
-from selenium.webdriver.common.proxy import Proxy, ProxyType
-from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import InvalidArgumentException, NoSuchElementException, TimeoutException, \
+    ElementClickInterceptedException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from scraper.models import Users
 from time import sleep
 import re
@@ -18,6 +20,7 @@ class Cliker:
         self.email_only = email_only
         self.hashtags = hashtags
         self.options = None
+
         if proxy != '':
             self.options = {
                 'proxy': {
@@ -26,19 +29,29 @@ class Cliker:
                     'no_proxy': 'localhost,127.0.0.1,dev_server:8080'
                 }
             }
+
+        fireFoxOptions = webdriver.FirefoxOptions()
+        fireFoxOptions.headless = True
+
         firefox_profile = webdriver.FirefoxProfile()
         firefox_profile.set_preference("intl.accept_languages", 'en-us')
         firefox_profile.update_preferences()
 
         try:
-            self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile)
+            self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile,
+                                            firefox_options=fireFoxOptions)
         except InvalidArgumentException:
             print('Close Firefox and try again')
 
         self.driver.get('https://www.instagram.com/')
-        sleep(2)
 
     def login(self, phone, password):
+        try:
+            WebDriverWait(self.driver, 60).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]/div/div[2]/div/label/input')))
+        except TimeoutException:
+            raise TimeoutException
+
         phone_field = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[1]/div/label/input')
         password_field = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[2]/div/label/input')
         phone_field.send_keys(phone)
@@ -47,8 +60,14 @@ class Cliker:
         login.click()
 
     def find_by_hashtag(self, hashtag):
-        sleep(4)
+        try:
+            WebDriverWait(self.driver, 60).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
+        except TimeoutException:
+            raise TimeoutException
+
         self.driver.get('https://www.instagram.com/explore/tags/{}/'.format(hashtag))
+        sleep(2)
 
     def scroll_quantity(self, soup):
         try:
@@ -61,9 +80,13 @@ class Cliker:
         except AttributeError:
             print('Scroll Quantity Not Found')
             return 300
-
     def click_photos(self):
-        sleep(2)
+        try:
+            WebDriverWait(self.driver, 60).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[3]')))
+        except TimeoutException:
+            raise TimeoutException
+
         coord = 2000
         self.driver.execute_script("window.scrollTo(0, {})".format(coord))
         html = self.driver.page_source
@@ -118,21 +141,30 @@ class Cliker:
                             photo = self.driver.find_element_by_xpath(xpath_soup(photo))
                         except NoSuchElementException:
                             continue
+                        try:
+                            photo.click()
+                            self.click_profile()
 
-                        photo.click()
-                        self.click_profile()
+                        except ElementClickInterceptedException:
+                            continue
 
     def click_profile(self):
-        sleep(1.5)
-        soup = BeautifulSoup(self.driver.page_source, 'lxml')
         try:
-            profile_xpath = xpath_soup(soup.find('a', 'yWX7d'))
-        except AttributeError:
-            sleep(2)
-            profile_xpath = xpath_soup(soup.find('a', 'yWX7d'))
+            WebDriverWait(self.driver, 60).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')))
+        except TimeoutException:
+            raise TimeoutException
 
-        self.driver.find_element_by_xpath(profile_xpath).click()
-        sleep(1)
+        self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a').click()
+
+        try:
+            WebDriverWait(self.driver, 60).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//*[@id="react-root"]/section/main/div/header/section/ul/li[1]/span')))
+        except TimeoutException:
+            raise TimeoutException
+
         scraper = Scraper(self.email_only, self.driver)
         scraper.scrape_profile()
 
@@ -142,11 +174,10 @@ class Scraper():
         self.driver = driver
 
     def has_email(self, soup):
-        sleep(1)
         try:
             div = soup.find('div', '-vDIg')
-            description = div.findChild('span').string
-            email = re.findall(r'.+@.+\..+', description)
+            description = div.findChild('span').text
+            email = re.findall(r'(\w+@.+\.\w+)', description)
             if len(email) > 0:
                 return True
             else:
@@ -155,8 +186,18 @@ class Scraper():
         except AttributeError:
             return False
 
+    def scrape_email(self, soup):
+        try:
+            div = soup.find('div', '-vDIg')
+            description = div.findChild('span').text
+            result = re.findall(r'(\w+@.+\.\w+)', description)[0]
+            return result
+        except AttributeError:
+            return ' '
+        except IndexError:
+            return ' '
+
     def scrape_profile(self):
-        sleep(3)
         soup = BeautifulSoup(self.driver.page_source, 'lxml')
         if self.email_only:
             if self.has_email(soup):
@@ -166,7 +207,7 @@ class Scraper():
                 followers = str(self.scrape_subscribers(soup)).replace(' ', '')
                 full_name = self.scrape_name(soup)
                 description = self.scrape_profile_description(soup)
-                email = ''
+                email = self.scrape_email(soup)
                 pic = self.scrape_profile_picture(soup)
                 subscribed_on_your_profile = self.subscribed_on_you(soup)
                 you_subscribed = self.you_subscrided(soup)
@@ -181,23 +222,28 @@ class Scraper():
             followers = str(self.scrape_subscribers(soup)).replace(' ', '')
             full_name = self.scrape_name(soup)
             description = self.scrape_profile_description(soup)
+            email = self.scrape_email(soup)
             pic = self.scrape_profile_picture(soup)
             subscribed_on_your_profile = self.subscribed_on_you(soup)
             you_subscribed = self.you_subscrided(soup)
             user = Users(username=username, posts=posts, followers=followers, following=following, name=full_name,
-                         description=description, email=' ', subscribed_on_your_profile=subscribed_on_your_profile,
+                         description=description, email=email, subscribed_on_your_profile=subscribed_on_your_profile,
                          you_subscribed=you_subscribed, picture=pic)
             user.save()
 
         self.driver.back()
         self.driver.back()
-        sleep(0.5)
+        sleep(1)
 
     def scrape_username(self, soup):
         try:
             return soup.find('h2', '_7UhW9').string
         except AttributeError:
-            return 'None'
+            try:
+                sleep(1)
+                return soup.find('h2', '_7UhW9').string
+            except AttributeError:
+                return 'None'
 
     def scrape_posts(self, soup):
         try:
@@ -238,7 +284,12 @@ class Scraper():
 
     def scrape_profile_picture(self, soup):
         try:
-            return soup.find('img', '_6q-tv')['src']
+            pic = soup.find('img', '_6q-tv')['src']
+            if len(pic) < 250:
+                return pic
+            else:
+                return ' '
+
         except AttributeError:
             raise Exception('imgERROR')
 

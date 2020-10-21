@@ -9,7 +9,7 @@ def export_using_filters(email_only, subscribed, subscribe):
     writer = csv.writer(response)
     writer.writerow(['ID', 'Username', 'Posts', 'Subscribed to you', 'Subscribed by you', 'Following',
                      'Followers', 'Name', 'Descriprion', 'Picture', 'Email'])
-
+    print(email_only, subscribed, subscribe)
     if email_only and subscribed and subscribe:
         users = Users.objects.exclude(email=' ', subscribed_on_your_profile=' ', you_subscribed= ' ')
     elif email_only and subscribed:
@@ -19,7 +19,9 @@ def export_using_filters(email_only, subscribed, subscribe):
     elif subscribed and subscribe:
         users = Users.objects.exclude(subscribed_on_your_profile=' ', you_subscribed= ' ')
     elif email_only:
+        print('EMAIL ONLY')
         users = Users.objects.exclude(email=' ')
+        print(users)
     elif subscribed:
         users = Users.objects.exclude(subscribed_on_your_profile=' ')
     elif subscribe:

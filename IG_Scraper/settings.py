@@ -82,15 +82,17 @@ WSGI_APPLICATION = 'IG_Scraper.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'myproject',
-        'USER': 'myprojectuser',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME' :'IG_Scraper',
+        'USER': 'IGScraper',
+        'PASSWORD': 'IGScraper2020',
+        'HOST': '127.0.0.1',
+        'PORT': 3306,
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'use_unicode': True, },
     }
 }
-
 
 
 # Password validation
