@@ -2126,3 +2126,55 @@ Exiting due to channel error.
 Exiting due to channel error.
 [GFX1-]: Receive IPC close with reason=AbnormalShutdown
 Exiting due to channel error.
+1603292824243	geckodriver	INFO	Listening on 127.0.0.1:49938
+1603292825262	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/r6/nb6z1l350yng5hfprt5hhgbm0000gn/T/rust_mozprofileOVY1eI"
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1603292827879	Marionette	INFO	Listening on port 49949
+1603292827931	Marionette	WARN	TLS certificate errors will be ignored for this session
+1603292827933	Marionette	INFO	Proxy settings initialised: {"proxyType":"manual","httpProxy":"127.0.0.1:49936","noProxy":[],"sslProxy":"127.0.0.1:49936"}
+1603292910419	geckodriver	INFO	Listening on 127.0.0.1:50475
+1603292911435	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-headless" "-foreground" "-no-remote" "-profile" "/var/folders/r6/nb6z1l350yng5hfprt5hhgbm0000gn/T/rust_mozprofileEshLD1"
+*** You are running in headless mode.
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1603292913808	Marionette	INFO	Listening on port 50486
+1603292913901	Marionette	WARN	TLS certificate errors will be ignored for this session
+1603292913904	Marionette	INFO	Proxy settings initialised: {"proxyType":"manual","httpProxy":"127.0.0.1:50473","noProxy":[],"sslProxy":"127.0.0.1:50473"}
+1603292934565	geckodriver	INFO	Listening on 127.0.0.1:50760
+1603292935557	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/r6/nb6z1l350yng5hfprt5hhgbm0000gn/T/rust_mozprofileSY6wRt"
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1603292937844	Marionette	INFO	Listening on port 50771
+1603292937907	Marionette	WARN	TLS certificate errors will be ignored for this session
+1603292937909	Marionette	INFO	Proxy settings initialised: {"proxyType":"manual","httpProxy":"127.0.0.1:50758","noProxy":[],"sslProxy":"127.0.0.1:50758"}
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 271: NS_ERROR_FAILURE: Should pass a non-null uri
+SourceActor threw an exception: [Exception... "Component returned failure code: 0x80470002 (NS_BASE_STREAM_CLOSED) [nsIInputStream.available]"  nsresult: "0x80470002 (NS_BASE_STREAM_CLOSED)"  location: "JS frame :: resource://devtools/shared/DevToolsUtils.js :: onResponse :: line 560"  data: no]
+Stack: onResponse@resource://devtools/shared/DevToolsUtils.js:560:34
+onStopRequest@resource://gre/modules/NetUtil.jsm:128:18
+Line: 560, column: 0
+console.error: ({})
+JavaScript error: resource://devtools/shared/DevToolsUtils.js, line 560: NS_BASE_STREAM_CLOSED: Component returned failure code: 0x80470002 (NS_BASE_STREAM_CLOSED) [nsIInputStream.available]
+1603293035071	Marionette	INFO	Stopped listening on port 50771
+1603293101697	geckodriver	INFO	Listening on 127.0.0.1:51693
+1603293102712	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/r6/nb6z1l350yng5hfprt5hhgbm0000gn/T/rust_mozprofileAZbSR5"
+console.error: SearchCache: "_readCacheFile: Error reading cache file:" (new Error("", "(unknown module)"))
+1603293105164	Marionette	INFO	Listening on port 51707
+1603293105183	Marionette	WARN	TLS certificate errors will be ignored for this session
+1603293105185	Marionette	INFO	Proxy settings initialised: {"proxyType":"manual","httpProxy":"127.0.0.1:51691","noProxy":[],"sslProxy":"127.0.0.1:51691"}
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 271: NS_ERROR_FAILURE: Should pass a non-null uri
+1603293456067	addons.xpi	ERROR	System addon update list error Error: Failed downloading XML, status: 0, reason: error
+1603293542459	addons.xpi	ERROR	System addon update list error Error: Failed downloading XML, status: 0, reason: error
+1603293733717	addons.xpi	ERROR	System addon update list error Error: Failed downloading XML, status: 0, reason: error
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+Exiting due to channel error.

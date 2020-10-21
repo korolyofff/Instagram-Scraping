@@ -39,6 +39,8 @@ class Cliker:
         try:
             self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile,
                                             firefox_options=fireFoxOptions)
+            sleep(5)
+            self.driver.maximize_window()
         except InvalidArgumentException:
             print('Close Firefox and try again')
 
