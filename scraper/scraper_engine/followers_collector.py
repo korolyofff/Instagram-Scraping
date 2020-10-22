@@ -7,10 +7,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-import numpy as np
-import pyautogui
-import imutils
-import cv2
 from scraper.models import Users
 from time import sleep
 import re
@@ -62,8 +58,6 @@ class Cliker:
         password_field = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[2]/div/label/input')
         phone_field.send_keys(phone)
         password_field.send_keys(password)
-        image = pyautogui.screenshot(region=(0, 0, 300, 400))
-        cv2.imwrite("pic.png", image)
         login = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div')
         WebDriverWait(self.driver, 60).until(
             EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[3]/button/div')))
