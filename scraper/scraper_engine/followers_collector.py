@@ -34,7 +34,7 @@ class Cliker:
         firefox_profile.update_preferences()
 
         fireFoxOptions = webdriver.FirefoxOptions()
-        fireFoxOptions.headless = True
+        # fireFoxOptions.headless = True
 
         try:
             self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile,
@@ -61,7 +61,7 @@ class Cliker:
         login = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div')
         WebDriverWait(self.driver, 60).until(
             EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[3]/button/div')))
-        login.click()
+        self.driver.execute_script("arguments[0].click();", login)
 
     def find_profile(self, profile):
         try:
