@@ -63,15 +63,12 @@ class Cliker:
         login = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div')
         WebDriverWait(self.driver, 60).until(
             EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[3]/button/div')))
-        login.click()
+        self.driver.execute_script("arguments[0].click();", login)
 
     def find_profile(self, profile):
-        try:
-            WebDriverWait(self.driver, 60).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
-        except NoSuchElementException:
-            raise NoSuchElementException
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
 
         self.driver.get('https://www.instagram.com/{}'.format(profile))
         sleep(2)

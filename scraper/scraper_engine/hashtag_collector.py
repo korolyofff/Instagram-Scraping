@@ -57,17 +57,13 @@ class Cliker:
         login = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div')
         WebDriverWait(self.driver, 60).until(
             EC.element_to_be_clickable((By.XPATH, '//*[@id="loginForm"]/div/div[3]/button/div')))
-        login.click()
+        self.driver.execute_script("arguments[0].click();", login)
 
     def find_by_hashtag(self, hashtag):
-        try:
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
-        except TimeoutException:
-            raise TimeoutException
-
-        self.driver.get('https://www.instagram.com/explore/tags/{}/'.format(hashtag))
-        sleep(2)
+            self.driver.get('https://www.instagram.com/explore/tags/{}/'.format(hashtag))
+            sleep(2)
 
     def scroll_quantity(self, soup):
         try:
