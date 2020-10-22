@@ -60,8 +60,12 @@ class Cliker:
         self.driver.execute_script("arguments[0].click();", login)
 
     def find_by_hashtag(self, hashtag):
-            WebDriverWait(self.driver, 60).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
+            try:
+                WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
+            except:
+                pass
+
             self.driver.get('https://www.instagram.com/explore/tags/{}/'.format(hashtag))
             sleep(2)
 
