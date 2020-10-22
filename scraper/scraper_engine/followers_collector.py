@@ -34,7 +34,7 @@ class Cliker:
         firefox_profile.update_preferences()
 
         fireFoxOptions = webdriver.FirefoxOptions()
-        # fireFoxOptions.headless = True
+        fireFoxOptions.headless = True
 
         try:
             self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile,
@@ -51,8 +51,8 @@ class Cliker:
         try:
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="loginForm"]/div/div[2]/div/label/input')))
-        except NoSuchElementException:
-            raise NoSuchElementException
+        except TimeoutException:
+            raise TimeoutException
 
         phone_field = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[1]/div/label/input')
         password_field = self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[2]/div/label/input')
@@ -64,7 +64,7 @@ class Cliker:
         self.driver.execute_script("arguments[0].click();", login)
 
     def find_profile(self, profile):
-        WebDriverWait(self.driver, 60).until(
+        WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
 
         self.driver.get('https://www.instagram.com/{}/'.format(profile))
@@ -74,18 +74,21 @@ class Cliker:
         try:
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a')))
-        except NoSuchElementException:
-            raise NoSuchElementException
+        except TimeoutException:
+            raise TimeoutException
 
         try:
-            self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a').click()
-        except: pass
+            element = self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a')
+            self.driver.execute_script("arguments[0].click();", element)
+
+        except:
+            raise AttributeError
 
         try:
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@role="dialog"]//ul/parent::div')))
-        except NoSuchElementException:
-            raise NoSuchElementException
+        except TimeoutException:
+            raise TimeoutException
 
         self.get_all_usernames(self.get_subscribers_count())
 

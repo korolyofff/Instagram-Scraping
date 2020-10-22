@@ -76,12 +76,10 @@ class Cliker:
         except AttributeError:
             print('Scroll Quantity Not Found')
             return 300
+
     def click_photos(self):
-        try:
-            WebDriverWait(self.driver, 60).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[3]')))
-        except TimeoutException:
-            raise TimeoutException
+        WebDriverWait(self.driver, 15).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[3]')))
 
         coord = 2000
         self.driver.execute_script("window.scrollTo(0, {})".format(coord))
@@ -116,7 +114,7 @@ class Cliker:
                     except NoSuchElementException:
                         continue
 
-                photo.click()
+                self.driver.execute_script("arguments[0].click();", photo)
                 self.click_profile()
 
         if self.scroll_quantity(soup) > 40 // 12:
@@ -138,7 +136,7 @@ class Cliker:
                         except NoSuchElementException:
                             continue
                         try:
-                            photo.click()
+                            self.driver.execute_script("arguments[0].click();", photo)
                             self.click_profile()
 
                         except ElementClickInterceptedException:
@@ -152,7 +150,8 @@ class Cliker:
         except TimeoutException:
             raise TimeoutException
 
-        self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a').click()
+        element = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')
+        self.driver.execute_script("arguments[0].click();", element)
 
         try:
             WebDriverWait(self.driver, 60).until(
