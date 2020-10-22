@@ -31,8 +31,8 @@ class Cliker:
             }
 
         fireFoxOptions = webdriver.FirefoxOptions()
-        fireFoxOptions.headless = True
-
+        # fireFoxOptions.headless = True
+ç
         firefox_profile = webdriver.FirefoxProfile()
         firefox_profile.set_preference("intl.accept_languages", 'en-us')
         firefox_profile.update_preferences()
@@ -122,9 +122,10 @@ class Cliker:
                     try:
                         photo = self.driver.find_element_by_xpath(xpath_soup(photo))
                     except NoSuchElementException:
+                        print('No Such Element')
                         continue
 
-                self.driver.execute_script("arguments[0].click();", photo)
+                photo.click()
                 self.click_profile()
 
         if self.scroll_quantity(soup) > 40 // 12:
@@ -144,31 +145,33 @@ class Cliker:
                             sleep(2)
                             photo = self.driver.find_element_by_xpath(xpath_soup(photo))
                         except NoSuchElementException:
+                            print('No such element')
                             continue
                         try:
-                            self.driver.execute_script("arguments[0].click();", photo)
+                            photo.click()
                             self.click_profile()
 
                         except ElementClickInterceptedException:
+                            print('ElementClickInterceptedException 155')
                             continue
 
     def click_profile(self):
         try:
-            WebDriverWait(self.driver, 60).until(
+            WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located(
                     (By.XPATH, '/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')))
         except TimeoutException:
-            raise TimeoutException
+            pass
 
         element = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')
         self.driver.execute_script("arguments[0].click();", element)
 
         try:
-            WebDriverWait(self.driver, 60).until(
+            WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located(
                     (By.XPATH, '//*[@id="react-root"]/section/main/div/header/section/ul/li[1]/span')))
         except TimeoutException:
-            raise TimeoutException
+            pass
 
         scraper = Scraper(self.email_only, self.driver)
         scraper.scrape_profile()
