@@ -31,8 +31,7 @@ class Cliker:
             }
 
         fireFoxOptions = webdriver.FirefoxOptions()
-        # fireFoxOptions.headless = True
-ç
+        fireFoxOptions.headless = True
         firefox_profile = webdriver.FirefoxProfile()
         firefox_profile.set_preference("intl.accept_languages", 'en-us')
         firefox_profile.update_preferences()
@@ -42,7 +41,7 @@ class Cliker:
                                             firefox_options=fireFoxOptions)
             sleep(5)
             self.driver.set_window_position(0, 0)
-            self.driver.set_window_size(1024, 768)
+            self.driver.maximize_window()
 
         except InvalidArgumentException:
             print('Close Firefox and try again')
@@ -88,6 +87,7 @@ class Cliker:
             return 300
 
     def click_photos(self):
+        #TODO CLICK
         WebDriverWait(self.driver, 15).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[3]')))
 
@@ -124,6 +124,10 @@ class Cliker:
                     except NoSuchElementException:
                         print('No Such Element')
                         continue
+                try:
+                   self.driver.find_element_by_class_name('aOOlW').click()
+                   print('Clicked cookie')
+                except: pass
 
                 photo.click()
                 self.click_profile()
@@ -148,16 +152,21 @@ class Cliker:
                             print('No such element')
                             continue
                         try:
+                            try:
+                                self.driver.find_element_by_class_name('aOOlW').click()
+                                print('Clicked cookie')
+                            except:
+                                pass
+
                             photo.click()
                             self.click_profile()
 
                         except ElementClickInterceptedException:
-                            print('ElementClickInterceptedException 155')
                             continue
 
     def click_profile(self):
         try:
-            WebDriverWait(self.driver, 5).until(
+            WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located(
                     (By.XPATH, '/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')))
         except TimeoutException:
@@ -167,7 +176,7 @@ class Cliker:
         self.driver.execute_script("arguments[0].click();", element)
 
         try:
-            WebDriverWait(self.driver, 5).until(
+            WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located(
                     (By.XPATH, '//*[@id="react-root"]/section/main/div/header/section/ul/li[1]/span')))
         except TimeoutException:
