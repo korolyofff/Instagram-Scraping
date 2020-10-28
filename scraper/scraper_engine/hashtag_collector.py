@@ -14,7 +14,7 @@ import re
 
 class Cliker:
     def __init__(self, hashtags, private_only: False, business_only: False, email_only: False, proxy_port: None,
-            proxy):
+                 proxy):
         self.business_only = business_only
         self.private_only = private_only
         self.email_only = email_only
@@ -44,7 +44,7 @@ class Cliker:
             self.driver.maximize_window()
 
         except InvalidArgumentException:
-            print('Close Firefox and try again')
+            raise exit()
 
         self.driver.get('https://www.instagram.com/')
 
@@ -65,14 +65,15 @@ class Cliker:
         self.driver.execute_script("arguments[0].click();", login)
 
     def find_by_hashtag(self, hashtag):
-            try:
-                WebDriverWait(self.driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
-            except:
-                pass
+        try:
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
+        except:
+            pass
 
-            self.driver.get('https://www.instagram.com/explore/tags/{}/'.format(hashtag))
-            sleep(2)
+        self.driver.get('https://www.instagram.com/explore/tags/{}/'.format(hashtag))
+        sleep(2)
 
     def scroll_quantity(self, soup):
         try:
@@ -83,13 +84,12 @@ class Cliker:
             return int(quantity) // 12
 
         except AttributeError:
-            print('Scroll Quantity Not Found')
             return 300
 
     def click_photos(self):
-        #TODO CLICK
         WebDriverWait(self.driver, 15).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[3]')))
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[@id="react-root"]/section/main/article/div[1]/div/div/div[1]/div[3]')))
 
         coord = 2000
         self.driver.execute_script("window.scrollTo(0, {})".format(coord))
@@ -122,12 +122,12 @@ class Cliker:
                     try:
                         photo = self.driver.find_element_by_xpath(xpath_soup(photo))
                     except NoSuchElementException:
-                        print('No Such Element')
                         continue
                 try:
-                   self.driver.find_element_by_class_name('aOOlW').click()
-                   print('Clicked cookie')
-                except: pass
+                    self.driver.find_element_by_class_name('aOOlW').click()
+                    sleep(3)
+                except:
+                    pass
 
                 photo.click()
                 self.click_profile()
@@ -141,7 +141,6 @@ class Cliker:
                 lines = soup.find_all('div', 'Nnq7C')
                 for line in lines[-4:]:
                     photos = line.findChildren('div', 'v1Nh3')
-                    print(len(photos))
                     for photo in photos:
                         try:
                             photo = self.driver.find_element_by_xpath(xpath_soup(photo))
@@ -149,12 +148,11 @@ class Cliker:
                             sleep(2)
                             photo = self.driver.find_element_by_xpath(xpath_soup(photo))
                         except NoSuchElementException:
-                            print('No such element')
                             continue
                         try:
                             try:
                                 self.driver.find_element_by_class_name('aOOlW').click()
-                                print('Clicked cookie')
+                                sleep(3)
                             except:
                                 pass
 
@@ -171,9 +169,17 @@ class Cliker:
                     (By.XPATH, '/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')))
         except TimeoutException:
             pass
+        except NoSuchElementException:
+            self.driver.back()
+            return
 
-        element = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')
-        self.driver.execute_script("arguments[0].click();", element)
+        try:
+            element = self.driver.find_element_by_xpath(
+                '/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')
+            self.driver.execute_script("arguments[0].click();", element)
+        except NoSuchElementException:
+            self.driver.back()
+            return
 
         try:
             WebDriverWait(self.driver, 10).until(
@@ -184,6 +190,7 @@ class Cliker:
 
         scraper = Scraper(self.email_only, self.driver)
         scraper.scrape_profile()
+
 
 class Scraper():
     def __init__(self, email_only, driver):
@@ -229,7 +236,8 @@ class Scraper():
                 subscribed_on_your_profile = self.subscribed_on_you(soup)
                 you_subscribed = self.you_subscrided(soup)
                 user = Users(username=username, posts=posts, followers=followers, following=following, name=full_name,
-                             description=description, email=email, subscribed_on_your_profile=subscribed_on_your_profile,
+                             description=description, email=email,
+                             subscribed_on_your_profile=subscribed_on_your_profile,
                              you_subscribed=you_subscribed, picture=pic)
                 user.save()
         else:
@@ -344,8 +352,10 @@ def xpath_soup(element):
     components.reverse()
     return '/%s' % '/'.join(components)
 
-def main(hashtags, private_only: False, business_only: False, email_only: False, proxy_port: None, proxy_host: '', login, password):
-    scraper = Cliker(hashtags, private_only, business_only,email_only, proxy_port, proxy_host)
+
+def main(hashtags, private_only: False, business_only: False, email_only: False, proxy_port: None, proxy_host: '',
+         login, password):
+    scraper = Cliker(hashtags, private_only, business_only, email_only, proxy_port, proxy_host)
     scraper.login(login, password)
     for hashtag in hashtags:
         hashtag = hashtag.replace(' ', '')

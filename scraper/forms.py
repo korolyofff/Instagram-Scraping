@@ -29,4 +29,3 @@ class ToCSVForm(forms.Form):
     subscribed = forms.BooleanField(label='Subscribed to you', required=False)
     subscribed_by_you = forms.BooleanField(label='Subscribed by you', required=False)
     email_only = forms.BooleanField(label='Email only', required=False)
-

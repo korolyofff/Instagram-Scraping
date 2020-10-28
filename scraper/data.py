@@ -7,6 +7,7 @@ def parse_hashtags(data):
     return data
 
 def parse_profiles(data):
+    data.replace('@', '')
     data = data.split(',')
     for d in data:
         d.replace(' ', '')

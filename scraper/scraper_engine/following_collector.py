@@ -44,7 +44,7 @@ class Cliker:
             self.driver.set_window_size(1024, 768)
 
         except InvalidArgumentException:
-            print('Close Firefox and try again')
+            raise exit()
 
         self.driver.get('https://www.instagram.com/')
         sleep(2)

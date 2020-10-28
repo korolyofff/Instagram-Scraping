@@ -43,7 +43,7 @@ class Cliker:
             self.driver.set_window_position(0, 0)
             self.driver.set_window_size(1024, 768)
         except InvalidArgumentException:
-            print('Close Firefox and try again')
+            raise exit()
 
         self.driver.get('https://www.instagram.com/')
 
@@ -66,8 +66,10 @@ class Cliker:
     def find_profile(self, profile):
         try:
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
-        except: pass
+                EC.presence_of_element_located(
+                    (By.XPATH, '//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/input')))
+        except:
+            pass
 
         self.driver.get('https://www.instagram.com/{}/'.format(profile))
         sleep(2)
@@ -75,12 +77,14 @@ class Cliker:
     def click_followers(self):
         try:
             WebDriverWait(self.driver, 60).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a')))
+                EC.presence_of_element_located(
+                    (By.XPATH, '//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a')))
         except TimeoutException:
             raise TimeoutException
 
         try:
-            element = self.driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a')
+            element = self.driver.find_element_by_xpath(
+                '//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a')
             self.driver.execute_script("arguments[0].click();", element)
 
         except:
@@ -115,7 +119,6 @@ class Cliker:
         except IndexError:
             return '0'
 
-
     def get_all_usernames(self, subscribers):
         try:
             soup = BeautifulSoup(self.driver.page_source, 'lxml')
@@ -146,6 +149,7 @@ class Cliker:
 
         except AttributeError:
             pass
+
 
 class Scraper():
     def __init__(self, email_only, driver):
@@ -193,7 +197,8 @@ class Scraper():
                 subscribed_on_your_profile = self.subscribed_on_you(soup)
                 you_subscribed = self.you_subscrided(soup)
                 user = Users(username=username, posts=posts, followers=followers, following=following, name=full_name,
-                             description=description, email=email, subscribed_on_your_profile=subscribed_on_your_profile,
+                             description=description, email=email,
+                             subscribed_on_your_profile=subscribed_on_your_profile,
                              you_subscribed=you_subscribed, picture=pic)
                 user.save()
         else:
@@ -297,7 +302,8 @@ class Scraper():
         elif 'k' in followers:
             return str(int(followers * 1000))
 
-        else: return followers
+        else:
+            return followers
 
     def get_following(self, following):
         if 'm' in following:
@@ -306,7 +312,9 @@ class Scraper():
         elif 'k' in following:
             return str(int(following * 1000))
 
-        else: return following
+        else:
+            return following
+
 
 def xpath_soup(element):
     components = []
@@ -323,7 +331,9 @@ def xpath_soup(element):
     components.reverse()
     return '/%s' % '/'.join(components)
 
-def main(profiles, private_only: False, business_only: False, email_only: False, proxy_port: None, proxy_host: '', login, password):
+
+def main(profiles, private_only: False, business_only: False, email_only: False, proxy_port: None, proxy_host: '',
+         login, password):
     scraper = Cliker(profiles, private_only, business_only, email_only, proxy_port, proxy_host)
     scraper.login(login, password)
     for profile in profiles:
