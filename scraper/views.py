@@ -22,11 +22,11 @@ class HashtagView(LoginRequiredMixin, View):
     def post(self, request):
         form = HashtagForm(request.POST)
         if form.is_valid():
-            login_data = LoginData.objects.get(pk=1)
+            login_data = LoginData.objects.exclude(pk=10000)
             info = form.cleaned_data
             hashtag_collector.main(data.parse_hashtags(info['hashtags']), info['private_only'],
                                    info['business_only'], info['email_only'], info['proxy_port'],
-                                   info['proxy_host'], login_data.login, login_data.password)
+                                   info['proxy_host'], login_data[0].login, login_data[0].password)
             template = loader.get_template('scrape.html')
 
             return HttpResponse(template.render())
@@ -42,12 +42,12 @@ class FollowersView(LoginRequiredMixin, View):
     def post(self, request):
         form = FollowersForm(request.POST)
         if form.is_valid():
-            login_data = LoginData.objects.get(pk=1)
+            login_data = LoginData.objects.exclude(pk=10000)
             info = form.cleaned_data
             print(info)
             followers_collector.main(data.parse_profiles(info['profiles']), info['private_only'],
                                      info['business_only'], info['email_only'], info['proxy_port'],
-                                     info['proxy_host'], login_data.login, login_data.password)
+                                     info['proxy_host'], login_data[0].login, login_data[0].password)
 
             template = loader.get_template('scrape.html')
 
@@ -64,11 +64,11 @@ class FollowingView(LoginRequiredMixin, View):
     def post(self, request):
         form = FollowingForm(request.POST)
         if form.is_valid():
-            login_data = LoginData.objects.get(pk=1)
+            login_data = LoginData.objects.exclude(pk=10000)
             info = form.cleaned_data
             fc.main(data.parse_profiles(info['profiles']), info['private_only'],
                     info['business_only'], info['email_only'], info['proxy_port'],
-                    info['proxy_host'], login_data.login, login_data.password)
+                    info['proxy_host'], login_data[0].login, login_data[0].password)
 
             template = loader.get_template('scrape.html')
 
