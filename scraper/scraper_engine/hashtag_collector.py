@@ -1,6 +1,7 @@
 '''Instagram WebScraping Hashtag Collector'''
 
 from bs4 import BeautifulSoup
+from django.db import DataError
 from seleniumwire import webdriver
 from selenium.common.exceptions import InvalidArgumentException, NoSuchElementException, TimeoutException, \
     ElementClickInterceptedException
@@ -31,7 +32,7 @@ class Cliker:
             }
 
         fireFoxOptions = webdriver.FirefoxOptions()
-        fireFoxOptions.headless = True
+        # fireFoxOptions.headless = True
         firefox_profile = webdriver.FirefoxProfile()
         firefox_profile.set_preference("intl.accept_languages", 'en-us')
         firefox_profile.update_preferences()
@@ -41,7 +42,7 @@ class Cliker:
                                             firefox_options=fireFoxOptions)
             sleep(5)
             self.driver.set_window_position(0, 0)
-            self.driver.maximize_window()
+            self.driver.set_window_size(1024, 768)
 
         except InvalidArgumentException:
             raise exit()
@@ -97,7 +98,7 @@ class Cliker:
         soup = BeautifulSoup(html, 'lxml')
         lines = soup.find_all('div', 'Nnq7C')
         for line in lines:
-            photos = line.findChildren('div', 'v1Nh3')
+            photos = line.findChildren('div', '_9AhH0')
             for photo in photos:
                 try:
                     if xpath_soup(photo) == '/html/body/div[1]/section/main/article/div[2]/div/div[15]/div[1]':
@@ -128,8 +129,13 @@ class Cliker:
                     sleep(3)
                 except:
                     pass
+                try:
+                    photo.click()
+                except:
+                    with open('html.txt','w') as f:
+                        f.write(str(self.driver.page_source))
+                    photo.click()
 
-                photo.click()
                 self.click_profile()
 
         if self.scroll_quantity(soup) > 40 // 12:
@@ -166,7 +172,7 @@ class Cliker:
         try:
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located(
-                    (By.XPATH, '/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')))
+                    (By.CSS_SELECTOR, '.e1e1d > span:nth-child(1) > a:nth-child(1)')))
         except TimeoutException:
             pass
         except NoSuchElementException:
@@ -174,9 +180,7 @@ class Cliker:
             return
 
         try:
-            element = self.driver.find_element_by_xpath(
-                '/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[1]/span/a')
-            self.driver.execute_script("arguments[0].click();", element)
+            self.driver.find_element_by_css_selector('.e1e1d > span:nth-child(1) > a:nth-child(1)').click()
         except NoSuchElementException:
             self.driver.back()
             return
@@ -254,7 +258,10 @@ class Scraper():
             user = Users(username=username, posts=posts, followers=followers, following=following, name=full_name,
                          description=description, email=email, subscribed_on_your_profile=subscribed_on_your_profile,
                          you_subscribed=you_subscribed, picture=pic)
-            user.save()
+            try:
+                user.save()
+            except DataError:
+                pass
 
         self.driver.back()
         self.driver.back()
