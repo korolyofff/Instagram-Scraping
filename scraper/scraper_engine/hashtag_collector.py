@@ -40,7 +40,6 @@ class Cliker:
         try:
             self.driver = webdriver.Firefox(seleniumwire_options=self.options, firefox_profile=firefox_profile,
                                             firefox_options=fireFoxOptions)
-            sleep(5)
             self.driver.set_window_position(0, 0)
             self.driver.set_window_size(1024, 768)
 
@@ -146,7 +145,7 @@ class Cliker:
                 soup = BeautifulSoup(html, 'lxml')
                 lines = soup.find_all('div', 'Nnq7C')
                 for line in lines[-4:]:
-                    photos = line.findChildren('div', 'v1Nh3')
+                    photos = line.findChildren('div', '_9AhH0')
                     for photo in photos:
                         try:
                             photo = self.driver.find_element_by_xpath(xpath_soup(photo))
@@ -243,7 +242,10 @@ class Scraper():
                              description=description, email=email,
                              subscribed_on_your_profile=subscribed_on_your_profile,
                              you_subscribed=you_subscribed, picture=pic)
-                user.save()
+                try:
+                    user.save()
+                except:
+                    pass
         else:
             username = self.scrape_username(soup)
             posts = str(self.scrape_posts(soup)).replace(' ', '')
@@ -260,7 +262,7 @@ class Scraper():
                          you_subscribed=you_subscribed, picture=pic)
             try:
                 user.save()
-            except DataError:
+            except:
                 pass
 
         self.driver.back()
