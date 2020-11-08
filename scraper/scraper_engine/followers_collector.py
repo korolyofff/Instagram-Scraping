@@ -107,10 +107,10 @@ class Cliker:
             followers = followers.replace(' ', '')
             if 'm' in followers:
                 followers = followers.replace('m', '')
-                followers = int(followers) * 1000000
+                followers = float(followers) * 1000000
             if 'k' in followers:
                 followers = followers.replace('k', '')
-                followers = int(followers) * 1000
+                followers = float(followers) * 1000
 
             return float(str(scraper.get_followers(str(followers))))
 
