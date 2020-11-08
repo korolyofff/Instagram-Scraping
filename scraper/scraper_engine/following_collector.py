@@ -299,7 +299,7 @@ class Scraper():
             return str(int(followers * 1000))
 
         else:
-            return followers
+            return followers.replace(',', '.')
 
     def get_following(self, following):
         if 'm' in following:
@@ -313,7 +313,7 @@ class Scraper():
             return str(int(following * 1000))
 
         else:
-            return following
+            return following.replace(',', '.')
 
 
 def xpath_soup(element):

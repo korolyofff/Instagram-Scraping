@@ -32,7 +32,7 @@ class Cliker:
             }
 
         fireFoxOptions = webdriver.FirefoxOptions()
-        # fireFoxOptions.headless = True
+        fireFoxOptions.headless = True
         firefox_profile = webdriver.FirefoxProfile()
         firefox_profile.set_preference("intl.accept_languages", 'en-us')
         firefox_profile.update_preferences()
